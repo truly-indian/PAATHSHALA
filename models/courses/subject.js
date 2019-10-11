@@ -13,6 +13,9 @@ const SubjectSchema = new Schema({
   Description: {
     type: String
   },
+  courseTitle:{
+   type:String
+  },
   Chapters: [chapterSchema]
 });
 

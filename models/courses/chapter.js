@@ -7,11 +7,14 @@ const chapterSchema = new Schema({
   subjectId: { 
     type: String
   },
-  Title: {
+  chapterTitle: {
     type: String
   },
   Description: {
     type: String
+  },
+  subjectTitle:{
+   type:String
   },
   Topics: [topicSchema]
 });

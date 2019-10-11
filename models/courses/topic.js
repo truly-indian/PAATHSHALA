@@ -4,12 +4,15 @@ const Schema = mongoose.Schema;
 const TopicSchema = new Schema({
   chapterId: {
     type: String 
-  },
+  }, 
   topicTitle: {
     type: String
   },
   Description: {
     type: String
+  },
+  chapterTitle:{
+   type:String
   },
   learnpage: {
     type: Array

@@ -1,7 +1,9 @@
 const Course = require("../../models/courses/course").model;
 const Subject = require("../../models/courses/subject").model;
 const Chapter = require("../../models/courses/chapter").model;
-
+const Topic = require('../../models/courses/topic').model
+// all the post routes for courses starts from here//////
+//=============add course rotue===========//
 exports.addCourse = (req, res) => {
   //here need to write joi validation check for req.body
   const { CourseTitle, Created_by, Description, Video_link } = req.body;
@@ -19,8 +21,8 @@ exports.addCourse = (req, res) => {
     .catch(err => {
       res.status(400).json(err);
     });
-};
-
+}; 
+//============add Subject routes==================//
 exports.addSubject = (req, res) => {
   Course.findOne({ CourseTitle: req.body.CourseTitle }).then(course => {
     if (!course) {
@@ -48,16 +50,17 @@ exports.addSubject = (req, res) => {
       .catch(err => console.log(err));
   });
 };
-
+//===============add chapter route======================//
 exports.addChapter = (req, res) => {
   Subject.findOne({ SubjectTitle: req.body.SubjectTitle }).then(subject => {
     if (!subject) {
       res.status(400).json("No subject found!!");
     }
+    const {subjectTitle, chapterTitle, Description} = req.body
     const newChapter = {
-      subjectTitle: req.body.subjectTitle,
-      chapterTitle: req.body.chapterTitle,
-      description: req.body.chapterDescription,
+      subjectTitle,
+      chapterTitle,
+      Description,
       subjectId: subject._id
     };
     new Chapter(newChapter)
@@ -74,16 +77,18 @@ exports.addChapter = (req, res) => {
       .catch(err => console.log(err));
   });
 };
-
+//===============addtopic route=======================//
 exports.addTopic = (req, res) => {
   Chapter.findOne({ chapterTitle: req.body.chapterTitle }).then(chapter => {
     if (!chapter) {
       res.status(400).json("no chapter found");
     }
+    const {topicTitle, Description, chapterTitle} = req.body
     const newTopic = {
-      topicTitle: req.body.topicTitle,
+      topicTitle,
       chapterId: chapter._id,
-      Description: req.body.Description
+      Description,
+      chapterTitle
     };
     new Topic(newTopic)
       .save()
@@ -99,3 +104,45 @@ exports.addTopic = (req, res) => {
       .catch(err => console.log(err));
   });
 };
+
+//all the get routes for courses starts from here===============//
+//========get rotue for all the courses==============//
+exports.getCourses = (req,res) => {
+  Course.find()
+  .then((courses) => {
+        res.status(200).json(courses)
+  })
+  .catch((err) => {
+        res.status(404).json({message:"Course not Found"})
+  })
+}
+//==================get route for all the subjects=====================//
+exports.getSubjects = (req,res) => {
+    Subject.find()
+    .then((subjects) => {
+           res.status(200).json(subjects)
+    }).catch((err) => {
+        res.status(404).json({message:'Subject not found'})
+    })
+}
+
+//====================get route for all the chapters==================//
+exports.getChapters = (req,res) => {
+    Chapter.find()
+    .then((chapters) => {
+       res.status(200).json(chapters)
+    }).catch((err) => {
+        res.status(404).json({message:'Chapter not found'})
+    })
+}
+
+//===========get route for all the topics ====================//
+exports.getTopics = (req,res) => {
+      Topic.find()
+      .then((topics) => {
+          res.status(200).json(topics)
+      })
+      .catch((err) => {
+            res.status(404).json({message:'Topic not found'})
+      })
+}
