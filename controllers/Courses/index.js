@@ -146,3 +146,47 @@ exports.getTopics = (req,res) => {
             res.status(404).json({message:'Topic not found'})
       })
 }
+
+//==================all the delete routes start from here===================//
+//---------delete route for course-------------------------
+exports.deleteCourse = (req,res) => {
+   Course.remove({_id:req.params.courseid})
+   .then(() => {
+        res.status(200).json({message:'Course has been deleted sucessfully!!'})
+   }).catch((err) => {
+        res.status(400).json(err)
+   })
+}
+
+//-------------------delete route for subject-------------------------//
+exports.delteSubject = (req,res) => {
+    Subject.remove({_id:req.params.subjectid})
+    .then(() => {
+       res.status(200).json({message:'Subject deleted sucessfully!!'})
+    })
+    .catch((err) => {
+       res.status(400).json(err)
+    })
+}
+
+//----------------delete route for Chapter---------------------//
+exports.deleteChapter = (req,res) => {
+    Chapter.remove({_id:req.params.chapterid})
+    .then(() => {
+      res.status(200).json({message:'chapter deleted sucessfully!!'})
+    })
+    .catch((err) => {
+       res.status(400).json(err)
+    })
+}
+
+//---------------delete route for topic--------------------//
+exports.deleteTopic = (req,res) => {
+        Topic.remove({_id:req.params.topicid})
+        .then(() => {
+           res.status(200).json({message:'topic deleted sucessfully!!'})
+        })
+        .catch((err) => {
+            res.status(400).json(err)
+        })
+}
