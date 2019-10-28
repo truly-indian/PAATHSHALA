@@ -8,6 +8,9 @@ const {getCourses, getSubjects, getChapters, getTopics} = require('../controller
 
 //import controllers for delete routes
 const {deleteCourse, delteSubject, deleteChapter, deleteTopic} =require('../controllers/Courses')
+
+//import controllers for edit routes
+const {editCourse, editSubject, editChapter, editTopic} =require('../controllers/Courses')
 /* important please use camelCase notation for variables and attributes should have First letter in uppercase  */
 /* okk i will use camelCase from now just saw this message*/
 
@@ -48,6 +51,20 @@ router.delete('/:chapterid', deleteChapter)
 
 //------------delete route for topic--------------//
 router.delete('/:topicid', deleteTopic)
+
+//=================update routes start from here===================//
+router.put('/:courseid', editCourse)
+
+//===========update route for subject====================//
+router.put('/:subjectid', editSubject)
+
+//===========edit route for chapter================//
+router.put('/:chapterid', editChapter)
+
+//edit route for topic==========//
+router.put('/:topicid', editTopic)
+
+
 
 
 module.exports = router;

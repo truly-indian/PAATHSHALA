@@ -35,58 +35,58 @@ router.get("/logout", (req, res) => {
 });
 
 //----add a subject---------------//
-router.post("/addsubject", verifyToken, addSubject);
+router.post("/addsubject",verifyToken, addSubject);
 
 //-------------add chapters-------------------//
-router.post("/addchapters", addChapter);
+router.post("/addchapters",verifyToken, addChapter);
 
 //add tpics to chapters-----------------------//
-router.post("/addtopics", addTopic);
+router.post("/addtopics",verifyToken, addTopic);
 //---------------add pages to topics----------------------//
-router.post("/addpages", addPage);
+router.post("/addpages",verifyToken, addPage);
 
 //----------------add sections to pages-----------------------//
-router.post("/addsection", addSection);
+router.post("/addsection",verifyToken, addSection);
 
 //-----------starting with all the get routes from here--------------------------//
 
 //to get the list of all the KDsubjects stored in the database
-router.get("/subjects", getSubjects);
+router.get("/subjects",verifyToken, getSubjects);
 
 //---------to get all the chapters related to a single kdsubject---------------------//
-router.get("/chapters/:subjecttitle", getChapters);
+router.get("/chapters/:subjecttitle",verifyToken, getChapters);
 
 //--------------to get all the topics realted to the single chapter------------------//
-router.get("/topics/:chaptertitle", getTopics);
+router.get("/topics/:chaptertitle",verifyToken, getTopics);
 
 //===============update routes starts from here===========================//
 //----------------update route for kdsubject---------------------//
-router.put('/subject/:subjectid', editSubject)
+router.put('/subject/:subjectid',verifyToken, editSubject)
 
 //=================update route for kd chapter=========================//
-router.put('/chapter/:chapterid' , editChapter)
+router.put('/chapter/:chapterid' ,verifyToken, editChapter)
 //========================update route for kd page =====================//
-router.put('/page/:pageid', editPage)
+router.put('/page/:pageid',verifyToken, editPage)
 //====================update route for topic===========================//
-router.put('/topic/:topicid', editTopic)
+router.put('/topic/:topicid',verifyToken, editTopic)
 //--------------------update route for kd section================//
-router.put('/section/:sectionid' , editSection)
+router.put('/section/:sectionid' ,verifyToken ,editSection)
 
 //---------------delete routes start from here-------------------------------------//
 //------------delete route for subject---------------------//
-router.delete('/subject/:subjectid' , deleteSubject)
+router.delete('/subject/:subjectid' ,verifyToken, deleteSubject)
 
 //---------------delete route for chapter--------------------//
-router.delete('/chapter/:chapterid' , deleteChapter) 
+router.delete('/chapter/:chapterid' ,verifyToken, deleteChapter) 
 
 //---------delete route for topic---------------------------//
-router.delete('/topic/:topicid' , deleteTopic)
+router.delete('/topic/:topicid' ,verifyToken, deleteTopic)
 
 //---------delete route for page----------------------//
-router.delete('/page/:pageid' ,deletePage)
+router.delete('/page/:pageid' ,verifyToken, deletePage)
 
 //----------delete route for section------------------//
-router.delete('/section/:sectionid' , deleteSection)
+router.delete('/section/:sectionid' ,verifyToken, deleteSection)
 
 
 

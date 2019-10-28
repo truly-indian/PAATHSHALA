@@ -190,3 +190,84 @@ exports.deleteTopic = (req,res) => {
             res.status(400).json(err)
         })
 }
+
+//=================all the put routes start from here==================//
+exports.editCourse = (req,res) => {
+   Course.findOne({_id:req.params.courseid})
+   .then((course) => {
+    course.CourseTitle=req.body.CourseTitle, 
+    course.Created_by = req.body.Created_by,
+    course.Description = req.body.Description,
+    course.Video_link = req.body.Video_link
+    course.save()
+    .then((editedcourse) => {
+        res.status(200).json(editedcourse)
+    })
+    .catch((err) => {
+       res.status(400).json(err)
+    })
+   })
+   .catch((err) => {
+         res.status(400).json(err)
+   })
+}
+
+//==================edit route for subject=====================//
+exports.editSubject = (req,res) => {
+         Subject.findOne({_id:req.params.subjectid})
+         .then((subject) => {
+          subject.SubjectTitle = req.body.subjectTitle,
+          subject.Description = req.body.Description, 
+          subject.CourseTitle = req.body.CourseTitle
+          subject.save()
+          .then((editedsubject) => {
+             res.status(200).json(editedsubject)
+          })
+          .catch((err) => {
+             res.status(400).json(err)
+          })
+         })
+         .catch((err) => {
+            res.status(400).json(err)
+         })
+}
+
+//==================edit chapter route=============//
+exports.editChapter = (req,res) => {
+        Chapter.findOne({_id:req.params.chapterid})
+        .then((chapter) => {
+          chapter.subjectTitle = req.body.subjectTitle,
+          chapter.chapterTitle = req.body.chapterTitle,
+          chapter.Description = req.body.Description
+          chapter.save()
+          .then((editedchapter) => {
+               res.status(200).json(editedchapter)
+          })
+          .catch((err) => {
+               res.status(400).json(err)
+          })
+        })
+        .catch((err) => {
+            res.status(400).json(err)
+        })
+}
+
+//======================edit route for topic=================//
+exports.editTopic = (req,res) => {
+       Topic.findOne({_id:req.params.topicid})
+       .then((topic) => {
+        topic.topicTitle = req.body.topicTitle,
+        topic.Description = req.body.Description,
+        topic.chapterTitle = req.body.chapterTitle
+        topic.save()
+        .then((editedsubject) => {
+            res.status(200).json(editedsubject)
+        })
+        .catch((err) => {
+             res.status(400).json(err)
+        })
+       })
+       .catch((err) => {
+           res.status(400).json(err)
+       })
+}

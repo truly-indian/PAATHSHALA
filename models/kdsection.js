@@ -8,7 +8,10 @@ const sectionTypeSchema = new Schema({
       id: {
         type: Schema.Types.ObjectId
       },
-      link: { type: String }
+      link: { type: String },
+      section_name: {
+        type:String
+      }
     })
   ],
   theory_img: [
@@ -16,7 +19,10 @@ const sectionTypeSchema = new Schema({
       id: {
         type: Schema.Types.ObjectId
       },
-      img_path: { light: "", dark: "" }
+      img_path: { light: "", dark: "" },
+      section_name: {
+        type:String
+      }
     })
   ],
   theory_richtext: [
@@ -24,7 +30,10 @@ const sectionTypeSchema = new Schema({
       id: {
         type: Schema.Types.ObjectId
       },
-      text_data: { type: String }
+      text_data: { type: String },
+      section_name: {
+        type:String
+      }
     })
   ],
   quiz: [
@@ -32,14 +41,20 @@ const sectionTypeSchema = new Schema({
       questionsimg: { light: String, dark: String },
       answerimg: { light: String, dark: String },
       videoSolutionURL: {},
-      answerkey: String
+      answerkey: String,
+      section_name: {
+        type:String
+      }
     }
   ], // need to be discuss
   assignment: [
     {
       questionsimg: { light: "", dark: "" },
       answerimg: { light: "", dark: "" },
-      videoSolutionURL: {}
+      videoSolutionURL: {},
+      section_name: {
+        type:String
+      }
     }
   ]
 });
@@ -52,7 +67,7 @@ const kdSectionSchema = new Schema({
     type: String
   },
   section_type: sectionTypeSchema,
-  topic_title: {
+  page_title: {
     type: String
   }
 });

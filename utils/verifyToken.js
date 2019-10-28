@@ -4,7 +4,7 @@ const jwtSecret = require("../config/jwtSecret");
 
 const verifyToken = (req, res, next) => {
   const savedToken = localStorage.getItem("loginToken");
-
+ console.log(savedToken)
   if (savedToken) {
     jwt.verify(savedToken, jwtSecret.jwtKey, (err, authData) => {
       if (err) {
