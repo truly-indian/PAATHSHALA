@@ -82,10 +82,12 @@ exports.loginAdmin = async (req, res, next) => {
 
 //-----add subject function-----------//
 exports.addSubject = (req, res) => {
+  console.log(req.body)
   const authData = req.authData;
   if (authData) {
     console.log(authData);
     const { subjectTitle, subjectDescription } = req.body;
+    console.log(subjectTitle)
     const newSubject = {
       subject_title: subjectTitle,
       description: subjectDescription
@@ -93,6 +95,7 @@ exports.addSubject = (req, res) => {
     new Subject(newSubject)
       .save()
       .then(newSubject => {
+        console.log(newSubject)
         res.status(200).json(newSubject)
       })
       .catch(err => {
@@ -181,16 +184,18 @@ exports.addPage = (req, res) => {
       if (!topics) {
         res.status(404).json({ err: "No Chapter found" });
       }
+      
       const newPage = {
         page_type: req.body.page_type,
         topic_title: req.body.topicTitle,
         topic_id: topics._id,
         page_title: req.body.page_title
       };
+      console.log(newPage)
       new Page(newPage)
         .save()
         .then(page => {
-          Page.findOne({ page_title: req.body.title })
+          Page.findOne({ page_title: req.body.page_title })
             .then(page => {
               Topic.findOneAndUpdate({ topic_title: req.body.topicTitle }, { $push: { Pages: page._id } }, { new: true })
                 .then(data => res.json(data))
@@ -210,8 +215,7 @@ exports.addPage = (req, res) => {
 exports.addSection = (req, res) => {
   const authData = req.authData
   if(authData) {
-
-    Section.findOne({page_title:req.body.page_title})
+    Page.findOne({page_title:req.body.page_title})
     .then((section) => {
            if(!section) {
              res.status(404).json({message: 'not found!!'})
@@ -219,32 +223,34 @@ exports.addSection = (req, res) => {
         const newSection = {
           section_title: req.body.section_title,
           page_title: req.body.page_title,
-          
         }
-        if(section_type === 'videos') {
-          newSection.section_type.videos.section_name = req.body.section_type
-          newSection.section_type.videos.link = req.body.link
+        if(req.body.section_type == 'videos') {
+          newSection.section_name = req.body.section_type
+          newSection.videos = req.body.videoLinks
         }
-        if(section_type === 'theory_image') {
-           newSection.section_type.theory_img.section_name = req.body.section_type
-           newSection.section_type.theory_img.img_path = req.body.img_path
+        if(req.body.section_type === 'theory_image') {
+           newSection.section_name = req.body.section_type
+           newSection.theory_img = req.body.img_path
         }
-        if(section_type === 'theoryrichtext') {
-             newSection.section_type.theoryrich_text.section_name = req.body.section_type
-             newSection.section_type.theoryrich_text.text_data = req.body.text_data
+        if(req.body.section_type === 'theoryrichtext') {
+             console.log(req.body.text_data)
+             newSection.section_name = req.body.section_type
+             newSection.theory_richtext = req.body.text_data
         }
-        if(section_type === 'quiz') {
-               newSection.section_type.quiz.section_name = req.body.section_type
-               newSection.section_type.quiz.questionsimg =  req.body.questionsimg
-               newSection.section_type.quiz.ansimg = req.body.answerimg
-               newSection.section_type.quiz.answerkey = req.body.answerkey
-               newSection.section_type.quiz.videoSolution.URL = req.body.videoSolutionURL
+        if(req.body.section_type === 'quiz') {
+           //needed to implemented correctly
+               newSection.section_name = req.body.section_type
+               newSection.quiz.questionsimg =  req.body.questionsimg
+               newSection.quiz.answerimg = req.body.answerimg
+               newSection.quiz.answerkey = req.body.answerkey
+               newSection.quiz.videoSolutionURL = req.body.videoSolutionURL
         }
-        if(section_type === 'assignment') {
-             newSection.section_type.assignment.section_name = req.body.section_type
-             newSection.section_type.assignment.questionsimg = req.body.questionsimg
-             newSection.section_type.assignment.ansimg = req.body.answerimg
-             newSection.section_type.assignment.videoSolution.URL = req.body.videoSolutionURL
+        if(req.body.section_type === 'assignment') {
+          //needed to be implemented correctly
+             newSection.section_name = req.body.section_type
+             newSection.questionsimg = req.body.questionsimg
+             newSection.answerimg = req.body.answerimg
+             newSection.videoSolutionURL = req.body.videoSolutionURL
         }
         new Section(newSection).save()
         .then((section) => {
@@ -257,6 +263,9 @@ exports.addSection = (req, res) => {
            .catch(err => console.log(err));
         })
         .catch(err => console.log(err));
+    })
+    .catch((err) => {
+             console.log(err)
     })
   }else {
     res.status(401).json({message: 'Unauthorized!!'})

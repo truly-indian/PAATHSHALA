@@ -67,6 +67,46 @@ const kdSectionSchema = new Schema({
     type: String
   },
   section_type: sectionTypeSchema,
+  section_name: {
+    type:String
+  },
+  videos:{
+    type:String,
+    default: 'No videos'
+  },
+  theory_img: {
+    type:String,
+    default: 'No image available!!'
+  },
+  theory_richtext:{
+    type:String,
+    default: 'No rich text available!!'
+  },
+  quiz:[{
+    questionsimg:{
+      type:String
+    },
+    answerimg:{
+      type:String
+    },
+    answerkey:{
+      type:String
+    },
+    videoSolutionURL: {
+      type:Array
+    }
+  }],
+  assignment:[{
+    questionsimg:{
+      type:String
+    },
+    answerimg:{
+      type:String
+    },
+    videoSolutionURL:{
+      type:Array
+    }
+  }],
   page_title: {
     type: String
   }
