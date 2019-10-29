@@ -1,10 +1,10 @@
 const bcrypt = require("bcryptjs");
-const Admin = require("../../models/admin").model;
-const Subject = require("../../models/kdsubject").model;
-const Chapter = require("../../models/kdchapter").model;
-const Topic = require("../../models/kdtopic").model;
-const Page = require("../../models/kdpage").model;
-const Section = require("../../models/kdsection").model;
+const kdAdmin = require("../../models/admin").model;
+const kdSubject = require("../../models/kdsubject").model;
+const kdChapter = require("../../models/kdchapter").model;
+const kdTopic = require("../../models/kdtopic").model;
+const kdPage = require("../../models/kdpage").model;
+const kdSection = require("../../models/kdsection").model;
 const jwt = require("jsonwebtoken");
 //when all the apis are created then we need to implemet verify token
 
@@ -92,7 +92,7 @@ exports.addSubject = (req, res) => {
       subject_title: subjectTitle,
       description: subjectDescription
     }
-    new Subject(newSubject)
+    new kdSubject(newSubject)
       .save()
       .then(newSubject => {
         console.log(newSubject)
@@ -112,7 +112,7 @@ exports.addChapter = (req, res) => {
   const authData = req.authData
   if(authData) {
     console.log(authData)
-    Subject.findOne({ subject_title: req.body.subjectTitle }).then(subject => {
+    kdSubject.findOne({ subject_title: req.body.subjectTitle }).then(subject => {
       if (!subject) {
         res.status(404).json({ err: "No Subject found!!!" });
       }
@@ -122,12 +122,12 @@ exports.addChapter = (req, res) => {
         description: req.body.chapterDescription,
         subject_id: subject._id
       };
-      new Chapter(newChapter)
+      new kdChapter(newChapter)
         .save()
         .then(chapter => {
-          Chapter.findOne({ subject_title: req.body.subjectTitle })
+          kdChapter.findOne({ subject_title: req.body.subjectTitle })
             .then(chapter => {
-              Subject.findOneAndUpdate({ subject_title: req.body.subjectTitle }, { $push: { Chapters: chapter._id } }, { new: true })
+              kdSubject.findOneAndUpdate({ subject_title: req.body.subjectTitle }, { $push: { Chapters: chapter._id } }, { new: true })
                 .then(data => res.json(data))
                 .catch(err => console.log(err));
             })
@@ -146,7 +146,7 @@ exports.addTopic = (req, res) => {
   //console.log(req.body.topicTitle);
   const authData = req.authData
   if(authData) {
-    Chapter.findOne({ chapterTitle: req.body.chapterTitle }).then(chapter => {
+    kdChapter.findOne({ chapterTitle: req.body.chapterTitle }).then(chapter => {
       if (!chapter) {
         res.status(404).json({ err: "No Chapter found" });
       }
@@ -156,12 +156,12 @@ exports.addTopic = (req, res) => {
         description: req.body.topicDescription,
         chapter_id: chapter._id
       };
-      new Topic(newTopic)
+      new kdTopic(newTopic)
         .save()
         .then(topic => {
-          Topic.findOne({ title: req.body.chapterTitle })
+          kdTopic.findOne({ title: req.body.chapterTitle })
             .then(topic => {
-              Chapter.findOneAndUpdate({ chapterTitle: req.body.chapterTitle }, { $push: { Topics: topic._id } }, { new: true })
+              kdChapter.findOneAndUpdate({ chapterTitle: req.body.chapterTitle }, { $push: { Topics: topic._id } }, { new: true })
                 .then(data => res.json(data))
                 .catch(err => console.log(err));
             })
@@ -180,7 +180,7 @@ exports.addPage = (req, res) => {
   //console.log(req.body.topicTitle);
   const authData = req.authData
   if(authData) {
-    Topic.findOne({ topic_title: req.body.topicTitle }).then(topics => {
+    kdTopic.findOne({ topic_title: req.body.topicTitle }).then(topics => {
       if (!topics) {
         res.status(404).json({ err: "No Chapter found" });
       }
@@ -192,12 +192,12 @@ exports.addPage = (req, res) => {
         page_title: req.body.page_title
       };
       console.log(newPage)
-      new Page(newPage)
+      new kdPage(newPage)
         .save()
         .then(page => {
-          Page.findOne({ page_title: req.body.page_title })
+          kdPage.findOne({ page_title: req.body.page_title })
             .then(page => {
-              Topic.findOneAndUpdate({ topic_title: req.body.topicTitle }, { $push: { Pages: page._id } }, { new: true })
+              kdTopic.findOneAndUpdate({ topic_title: req.body.topicTitle }, { $push: { Pages: page._id } }, { new: true })
                 .then(data => res.json(data))
                 .catch(err => console.log(err));
             })
@@ -213,9 +213,10 @@ exports.addPage = (req, res) => {
 
 //--------------------add sections function---------------//
 exports.addSection = (req, res) => {
+  
   const authData = req.authData
   if(authData) {
-    Page.findOne({page_title:req.body.page_title})
+    kdPage.findOne({page_title:req.body.page_title})
     .then((section) => {
            if(!section) {
              res.status(404).json({message: 'not found!!'})
@@ -238,7 +239,7 @@ exports.addSection = (req, res) => {
              newSection.theory_richtext = req.body.text_data
         }
         if(req.body.section_type === 'quiz') {
-           //needed to implemented correctly
+           //needed to implemented correctly//
                newSection.section_name = req.body.section_type
                newSection.quiz.questionsimg =  req.body.questionsimg
                newSection.quiz.answerimg = req.body.answerimg
@@ -246,17 +247,18 @@ exports.addSection = (req, res) => {
                newSection.quiz.videoSolutionURL = req.body.videoSolutionURL
         }
         if(req.body.section_type === 'assignment') {
-          //needed to be implemented correctly
+          //needed to be implemented correctly//
              newSection.section_name = req.body.section_type
-             newSection.questionsimg = req.body.questionsimg
-             newSection.answerimg = req.body.answerimg
-             newSection.videoSolutionURL = req.body.videoSolutionURL
+             newSection.assignment.questionsimg = req.body.questionsimg
+             newSection.assignment.answerimg = req.body.answerimg
+             newSection.assignment.videoSolutionURL = req.body.videoSolutionURL
         }
-        new Section(newSection).save()
+        console.log(newSection)
+        new kdSection(newSection).save()
         .then((section) => {
-           Section.findOne({section_title: req.body.section_title})
+           kdSection.findOne({section_title: req.body.section_title})
            .then((section) => {
-              Page.findOneAndUpdate({page_title: req.body.page_title}, { $push: { Sections: section._id } }, { new: true })
+              kdPage.findOneAndUpdate({page_title: req.body.page_title}, { $push: { Sections: section._id } }, { new: true })
               .then(data => res.json(data))
                .catch(err => console.log(err));
            })
@@ -277,7 +279,7 @@ exports.addSection = (req, res) => {
 exports.getSubjects = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Subject.find()
+    kdSubject.find()
     .then(kdsubjects => {
       res.status(200).json(kdsubjects);
     })
@@ -293,7 +295,7 @@ exports.getSubjects = (req, res) => {
 exports.getChapters = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Chapter.find({ subject_title: req.params.subjecttitle })
+    kdChapter.find({ subject_title: req.params.subjecttitle })
     .then(chapters => {
       res.status(200).json(chapters);
     })
@@ -309,7 +311,7 @@ exports.getChapters = (req, res) => {
 exports.getTopics = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Topic.find({ title: req.params.chaptertitle })
+    kdTopic.find({ title: req.params.chaptertitle })
     .then(topics => {
       res.status(200).json(topics);
     })
@@ -326,7 +328,7 @@ exports.getTopics = (req, res) => {
 exports.deleteSubject = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Subject.remove({ _id: req.params.subjectid })
+    kdSubject.remove({ _id: req.params.subjectid })
     .then(() => {
       res.status(200).json("Subject deleted successfully!!");
     })
@@ -342,7 +344,7 @@ exports.deleteSubject = (req, res) => {
 exports.deleteChapter = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Chapter.remove({ _id: req.params.chapterid })
+    kdChapter.remove({ _id: req.params.chapterid })
     .then(() => {
       res.status(200).json("chapter deleted sucessfully!!");
     })
@@ -358,7 +360,7 @@ exports.deleteChapter = (req, res) => {
 exports.deleteTopic = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Topic.remove({ _id: req.params.topicid })
+    kdTopic.remove({ _id: req.params.topicid })
     .then(() => {
       res.status(200).json("topic deleted sucessfully!!");
     })
@@ -374,7 +376,7 @@ exports.deleteTopic = (req, res) => {
 exports.deletePage = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Page.remove({ _id: req.params.pageid })
+    kdPage.remove({ _id: req.params.pageid })
     .then(() => {
       res.status(200).json("page is deleted sucessfully");
     })
@@ -390,7 +392,7 @@ exports.deletePage = (req, res) => {
 exports.deleteSection = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Section.remove({ _id: req.params.sectionid }).then(() => {
+    kdSection.remove({ _id: req.params.sectionid }).then(() => {
       res.status(200).json("section deleted sucessfully!!");
     })
     .catch((err) => {
@@ -409,7 +411,7 @@ exports.deleteSection = (req, res) => {
 exports.editSubject = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Subject.findOne({ _id: req.params.subjectid })
+    kdSubject.findOne({ _id: req.params.subjectid })
     .then(subject => {
       (subject.subject_title = req.body.subjectTitle), (subject.description = req.body.subjectDescription);
       subject
@@ -435,7 +437,7 @@ exports.editChapter = (req, res) => {
  // console.log(req.body);
  const authData = req.authData
  if(authData) {
-  Chapter.findOne({ _id: req.params.chapterid })
+  kdChapter.findOne({ _id: req.params.chapterid })
   .then(chapter => {
     (chapter.subject_title = req.body.subjectTitle),
       (chapter.chapterTitle = req.body.chapterTitle),
@@ -462,7 +464,7 @@ exports.editChapter = (req, res) => {
 exports.editPage = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Page.findOne({ _id: req.params.pageid })
+    kdPage.findOne({ _id: req.params.pageid })
     .then(page => {
       (page.page_type = req.body.page_type), (page.topic_title = req.body.topicTitle), (page.page_title = req.body.page_title);
       page
@@ -490,14 +492,14 @@ exports.editPage = (req, res) => {
 exports.editTopic = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Topic.findOne({ _id: req.params.topicid })
+    kdTopic.findOne({ _id: req.params.topicid })
     .then(topic => {
       (topic.title = req.body.chapterTitle),
         (topic.topic_title = req.body.topicTitle),
         (topic.description = req.body.topicDescription),
-        topic
-          .save()
+        topic.save()
           .then(editedTopic => {
+           // console.log(editedTopic)
             res.status(200).json(editedTopic);
           })
           .catch(err => {
@@ -517,23 +519,24 @@ exports.editTopic = (req, res) => {
 exports.editSection = (req, res) => {
   const authData = req.authData
   if(authData) {
-    Section.findOne({ _id: req.params.sectionid })
+    kdSection.findOne({ _id: req.params.sectionid })
     .then((section) => {
       section.section_title =  req.body.section_title
       section.page_title = req.body.page_title
-      if(section_type === 'videos') {
-        section.section_type.videos.section_name = req.body.section_type
-        section.section_type.videos.link = req.body.link
+      if(req.body.section_type === 'videos') {
+        section.section_name = req.body.section_type
+        section.videos = req.body.videoLinks
       }
-      if(section_type === 'theory_image') {
-        section.section_type.theory_img.section_name = req.body.section_type
-        section.section_type.theory_img.img_path = req.body.img_path
+      if(req.body.section_type === 'theory_image') {
+        section.section_name = req.body.section_type
+        section.theory_img = req.body.img_path
      }
      if(section_type === 'theoryrichtext') {
-      section.section_type.theoryrich_text.section_name = req.body.section_type
-      section.section_type.theoryrich_text.text_data = req.body.text_data
+      section.section_name = req.body.section_type
+      section.theoryrich_text = req.body.text_data
      }
      if(section_type === 'quiz') {
+       //needed to be implemented the below code is not working
       section.section_type.quiz.section_name = req.body.section_type
       section.section_type.quiz.questionsimg =  req.body.questionsimg
       section.section_type.quiz.ansimg = req.body.answerimg
@@ -541,6 +544,7 @@ exports.editSection = (req, res) => {
       section.section_type.quiz.videoSolution.URL = req.body.videoSolutionURL
      }
      if(section_type === 'assignment') {
+       //needed to be implemented the below code is not working
       section.section_type.assignment.section_name = req.body.section_type
       section.section_type.assignment.questionsimg = req.body.questionsimg
       section.section_type.assignment.ansimg = req.body.answerimg

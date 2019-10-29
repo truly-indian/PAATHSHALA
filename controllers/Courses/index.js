@@ -7,6 +7,7 @@ const Topic = require('../../models/courses/topic').model
 exports.addCourse = (req, res) => {
   //here need to write joi validation check for req.body
   const { CourseTitle, Created_by, Description, Video_link } = req.body;
+  console.log(req.body)
   const newCourse = {
     CourseTitle,
     Created_by,
@@ -24,24 +25,25 @@ exports.addCourse = (req, res) => {
 }; 
 //============add Subject routes==================//
 exports.addSubject = (req, res) => {
-  Course.findOne({ CourseTitle: req.body.CourseTitle }).then(course => {
+  Course.findOne({ CourseTitle: req.body.courseTitle }).then(course => {
     if (!course) {
-      res.status(404).json({ message: "No such course found!!!", status: 404 });
+      return res.status(404).json({ message: "No such course found!!!", status: 404 });
     }
-    const { SubjectTitle, Description, CourseTitle } = req.body;
-
+    const { SubjectTitle, Description } = req.body;
+   
     const newSubject = {
       courseId: course._id,
       SubjectTitle,
       Description,
-      CourseTitle
+      courseTitle:req.body.courseTitle
     };
+    
     new Subject(newSubject)
       .save()
       .then(subject => {
-        Subject.findOne({ CourseTitle })
+        Subject.findOne({SubjectTitle:req.body.SubjectTitle})
           .then(subject => {
-            Course.findOneAndUpdate({ CourseTitle: req.body.CourseTitle }, { $push: { Subjects: subject._id } }, { new: true })
+            Course.findOneAndUpdate({ CourseTitle: req.body.courseTitle }, { $push: { Subjects: subject._id } }, { new: true })
               .then(data => res.json(data))
               .catch(err => console.log(err));
           })
@@ -56,9 +58,9 @@ exports.addChapter = (req, res) => {
     if (!subject) {
       res.status(400).json("No subject found!!");
     }
-    const {subjectTitle, chapterTitle, Description} = req.body
+    const {SubjectTitle, chapterTitle, Description} = req.body
     const newChapter = {
-      subjectTitle,
+      SubjectTitle,
       chapterTitle,
       Description,
       subjectId: subject._id
@@ -66,9 +68,9 @@ exports.addChapter = (req, res) => {
     new Chapter(newChapter)
       .save()
       .then(chapter => {
-        Chapter.findOne({ subjectTitle: req.body.subjectTitle })
+        Chapter.findOne({ SubjectTitle: req.body.SubjectTitle })
           .then(chapter => {
-            Subject.findOneAndUpdate({ subjectTitle: req.body.subjectTitle }, { $push: { Chapters: chapter._id } }, { new: true })
+            Subject.findOneAndUpdate({ SubjectTitle: req.body.SubjectTitle }, { $push: { Chapters: chapter._id } }, { new: true })
               .then(data => res.json(data))
               .catch(err => console.log(err));
           })

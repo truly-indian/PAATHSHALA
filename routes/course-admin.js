@@ -21,7 +21,7 @@ router.post("/addcourse", addCourse);
 router.post("/addsubject", addSubject);
 
 //----------add chapter post route--------------------//
-router.get("/addchapter", addChapter);
+router.post("/addchapter", addChapter);
 
 //-----------------add topic post route --------------//
 router.post("/addtopic", addTopic);

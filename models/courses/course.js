@@ -7,7 +7,7 @@ const CourseSchema = new Schema({
   CourseTitle: {
     type: String
   },
-  Created_by: {
+  Created_by: { 
     type: String
   },
   Description: {

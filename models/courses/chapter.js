@@ -13,7 +13,7 @@ const chapterSchema = new Schema({
   Description: {
     type: String
   },
-  subjectTitle:{
+  SubjectTitle:{
    type:String
   },
   Topics: [topicSchema]

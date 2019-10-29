@@ -36,18 +36,18 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 mongoose
-  .connect(process.env.MONGODB_TEST_URI || keys.mongodb.dbURI, { useUnifiedTopology: true, useNewUrlParser: true })
-  .then(() => console.log(`${process.env.MONGODB_TEST_URI} connected to mongodb`))
+  .connect( keys.mongodb.dbURI , { useUnifiedTopology: true, useNewUrlParser: true })
+  .then(() => console.log( 'connected to mongodb'))
   .catch(err => {
     console.log(err);
   });
 
+  app.get("/", (req, res) => {
+    res.send('you are seeing the welocme page!!')
+  })
+   
 app.use("/admin", adminRoutes);
 app.use('/courseadmin' , CourseAdminRoutes)
-
-app.get("/", (req, res) => {
-  res.render("Subject/addsubject");
-})
 
 
 
