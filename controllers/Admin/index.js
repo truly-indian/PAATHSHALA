@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const kdAdmin = require("../../models/admin").model;
+const Admin = require("../../models/admin").model;
 const kdSubject = require("../../models/kdsubject").model;
 const kdChapter = require("../../models/kdchapter").model;
 const kdTopic = require("../../models/kdtopic").model;
@@ -568,4 +568,24 @@ exports.editSection = (req, res) => {
    res.status(401).json({message:'unauthorized!!'})
  }
 }
+//---------------route for change password---------------//
+exports.editPassword = (req,res,next) => {
+     Admin.findOne({email: req.body.email})
+     .then((admin) => {
+            if(!admin) {
+              return res.status(404).json({message: 'No user found!!'})
+            }
+             bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+                admin.password = hashedPassword
+                admin.save()
+                .then(() => res.status(200).json({message:'password changed sucessfully'}))
+             })
+           
+     })
+     .catch((err) => {
+        console.log(err)
+        res.status(400).json({message: 'error!!'})
+     })
+}
+
 ///all the crud functionality for the admin end here///

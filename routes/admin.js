@@ -11,7 +11,7 @@ const { getSubjects, getChapters, getTopics } = require("../controllers/Admin");
 const {deleteSubject, deleteChapter, deleteTopic, deletePage, deleteSection} = require('../controllers/Admin')
 
 //controllers for all the update routes
-const {editSubject, editChapter, editPage, editTopic, editSection} = require('../controllers/Admin')
+const {editSubject, editChapter, editPage, editTopic, editSection, editPassword} = require('../controllers/Admin')
 
 //verifyToken utility
 const verifyToken = require("../utils/verifyToken");
@@ -71,7 +71,8 @@ router.put('/page/:pageid',verifyToken, editPage)
 router.put('/topic/:topicid',verifyToken, editTopic)
 //--------------------update route for kd section================//
 router.put('/section/:sectionid' ,verifyToken ,editSection)
-
+//---------------------update route for change password----------------------//
+router.put('/changepassword',verifyToken,editPassword)
 //---------------delete routes start from here-------------------------------------//
 //------------delete route for subject---------------------//
 router.delete('/subject/:subjectid' ,verifyToken, deleteSubject)
