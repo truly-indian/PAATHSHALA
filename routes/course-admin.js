@@ -1,7 +1,7 @@
 const router = require("express").Router();
-
+const bodyParser = require('body-parser')
 //import controllers for post routes
-const { addCourse, addSubject, addChapter, addTopic } = require("../controllers/Courses");
+const { addCourse, addSubject, addChapter, addTopic, signUpCourseAdmin, loginCourseAdmin } = require("../controllers/Courses");
 
 //import controllers for get routes
 const {getCourses, getSubjects, getChapters, getTopics} = require('../controllers/Courses')
@@ -14,6 +14,27 @@ const {editCourse, editSubject, editChapter, editTopic} =require('../controllers
 /* important please use camelCase notation for variables and attributes should have First letter in uppercase  */
 /* okk i will use camelCase from now just saw this message*/
 
+
+//verifyToken utility
+const verifyToken = require('../utils/verifyToken')
+const localStorage = require('../utils/localStorage')
+
+router.use(bodyParser.urlencoded({extended: false}))
+router.use(bodyParser.json())
+//----------post route for course admin------------//
+router.post('/signup', signUpCourseAdmin)
+
+//=================post route for login CourseAdmin==================//
+router.post('/login', loginCourseAdmin)
+
+// ====================get route for logging course admin out=================//
+router.get('/logout', (req,res) => {
+ localStorage.removeItem('loginToken')
+ res.status(200)
+ .json({
+     message: 'Logged Out successfully'
+ })
+})
 //-----------------add course post route ----------//
 router.post("/addcourse", addCourse);
 

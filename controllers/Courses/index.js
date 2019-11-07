@@ -2,6 +2,87 @@ const Course = require("../../models/courses/course").model;
 const Subject = require("../../models/courses/subject").model;
 const Chapter = require("../../models/courses/chapter").model;
 const Topic = require('../../models/courses/topic').model
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+const courseAdmin = require('../../models/courses/courseAdmin').model
+
+//importing localStorage
+const localStorage = require('../../utils/localStorage')
+//configs
+const jwtSecret = require('../../config/jwtSecret')
+
+//signUp controller
+exports.signUpCourseAdmin = (req,res,next) => {
+  courseAdmin.findOne({email: req.body.email})
+  .then((courseadmin) => {
+         if(courseadmin) {
+               return res.status(409).json({
+                 message: 'email aleady exists!!'
+               })
+         }
+         else {
+             const newCourseAdmin = {
+               email : req.body.email,
+               role : req.body.role
+             }
+             bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+                  newCourseAdmin.password = hashedPassword
+                  
+             })
+             new courseAdmin(newCourseAdmin).save()
+             .then(() => {
+               res.status(200).json({
+                   message:'admin added successfully!!'
+                 })
+             })
+         }
+  })
+  .catch((err) => {
+       console.log(err)
+       res.status(400).json({
+         message: 'error occured!!'
+       })
+  })
+}
+
+//============login courseAdmin controller
+exports.loginCourseAdmin = (req,res,next) => {
+       courseAdmin.findOne({email: req.body.email})
+       .then((courseadmin) => {
+         if(courseadmin) {
+              bcrypt.compare(req.body.password, courseadmin.password, (err,hash)  => {
+                    if(err) {
+                      return res.status(401).json({
+                        message: 'unauthorized!!'
+                      })
+                    }else {
+                      jwt.sign({id:courseadmin._id}, jwtSecret.jwtKey, (err, Token) => {
+                        localStorage.setItem("loginToken", token)
+                        res.status(200).json({
+                          "access-token": token,
+                          registeredEmail: courseadmin.email,
+                          message: "Login Success",
+                          status: 200
+                        })
+                      })
+                    }
+              })
+         }
+         else {
+           return res.status(409).json({
+             message: 'no user found !!'
+           })
+         }
+       })
+       .catch((err) => {
+           console.log(err)
+           res.status(400).json({
+             message: 'error occured!!'
+           })
+       })
+}
+
+
 // all the post routes for courses starts from here//////
 //=============add course rotue===========//
 exports.addCourse = (req, res) => {

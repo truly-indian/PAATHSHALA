@@ -5,7 +5,7 @@ const kdChapter = require("../../models/kdchapter").model;
 const kdTopic = require("../../models/kdtopic").model;
 const kdPage = require("../../models/kdpage").model;
 const kdSection = require("../../models/kdsection").model;
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken"); 
 //when all the apis are created then we need to implemet verify token
 
 /*--------------joi validation schema-----------*/

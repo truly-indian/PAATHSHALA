@@ -12,6 +12,7 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const CourseAdminRoutes = require('./routes/course-admin')
 const methodOverride = require('method-override')
+const amqp = require('amqplib/callback_api')
 const app = express();
 
 const SERVER_PORT = process.env.PORT || 3000;
@@ -41,6 +42,23 @@ mongoose
   .catch(err => {
     console.log(err);
   });
+/*
+amqp.connect('amqp://localhost', (err, conn) => {
+  conn.createChannel((err, ch) => {
+  const queue = 'FirstQueue'
+  const message = {type: '2', content: 'Hello RabbitMQ'}
+  ch.assertQueue(queue, {durable: false})
+  ch.sendToQueue(queue, Buffer.from(JSON.stringify(message)))
+  console.log(`Message was sent!!`)
+  })
+  setTimeout(() => {
+    conn.close()
+    process.exit(0)
+  },500)
+})
+*/
+
+
 
   app.get("/", (req, res) => {
     res.send('you are seeing the welocme page!!')
