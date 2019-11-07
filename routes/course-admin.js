@@ -10,7 +10,7 @@ const {getCourses, getSubjects, getChapters, getTopics} = require('../controller
 const {deleteCourse, delteSubject, deleteChapter, deleteTopic} =require('../controllers/Courses')
 
 //import controllers for edit routes
-const {editCourse, editSubject, editChapter, editTopic} =require('../controllers/Courses')
+const {editCourse, editSubject, editChapter, editTopic, editPassword} =require('../controllers/Courses')
 /* important please use camelCase notation for variables and attributes should have First letter in uppercase  */
 /* okk i will use camelCase from now just saw this message*/
 
@@ -36,55 +36,57 @@ router.get('/logout', (req,res) => {
  })
 })
 //-----------------add course post route ----------//
-router.post("/addcourse", addCourse);
+router.post("/addcourse", verifyToken, addCourse);
 
 //---------------add subjects post router -----------------//
-router.post("/addsubject", addSubject);
+router.post("/addsubject", verifyToken, addSubject);
 
 //----------add chapter post route--------------------//
-router.post("/addchapter", addChapter);
+router.post("/addchapter",verifyToken, addChapter);
 
 //-----------------add topic post route --------------//
-router.post("/addtopic", addTopic);
+router.post("/addtopic",verifyToken, addTopic);
 
 //-----------------all the get routes for courses starts from here------------------//
 //--------get route for all the courses-------------------//
-router.get('/courses', getCourses)
+router.get('/courses',verifyToken, getCourses)
 
 //------------get route for all the subjects----------------------//
-router.get('/subjects', getSubjects)
+router.get('/subjects',verifyToken, getSubjects)
 
 //==============get route for all the chapters=================//
-router.get('/chapters', getChapters)
+router.get('/chapters',verifyToken, getChapters)
 
 //rotue for getting all the topics//
-router.get('/topics', getTopics)
+router.get('/topics',verifyToken, getTopics)
 
 // all the delte routes for courses starts from here ---------//
 //-------delete route for course
-router.delete('/:courseid', deleteCourse)
+router.delete('/:courseid',verifyToken, deleteCourse)
 
 // ----delete route for subject------------------//
-router.delete('/:subjectid', delteSubject)
+router.delete('/:subjectid',verifyToken, delteSubject)
 
 //--------delete route for chapter----------------//
-router.delete('/:chapterid', deleteChapter)
+router.delete('/:chapterid',verifyToken, deleteChapter)
 
 //------------delete route for topic--------------//
-router.delete('/:topicid', deleteTopic)
+router.delete('/:topicid',verifyToken, deleteTopic)
 
 //=================update routes start from here===================//
-router.put('/:courseid', editCourse)
+router.put('/:courseid',verifyToken, editCourse)
 
 //===========update route for subject====================//
-router.put('/:subjectid', editSubject)
+router.put('/:subjectid',verifyToken, editSubject)
 
 //===========edit route for chapter================//
-router.put('/:chapterid', editChapter)
+router.put('/:chapterid',verifyToken, editChapter)
 
 //edit route for topic==========//
-router.put('/:topicid', editTopic)
+router.put('/:topicid',verifyToken, editTopic)
 
+//edit route for courseAdmin to change password//
+router.put('/changepassword',verifyToken, editPassword)
 
 
 
