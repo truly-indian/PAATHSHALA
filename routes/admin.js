@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const { signUpAdmin, loginAdmin, addSubject, addChapter, addTopic, addPage, addSection } = require("../controllers/Admin");
 
 //controllers for get requests
-const { getSubjects, getChapters, getTopics } = require("../controllers/Admin");
+const { getSubjects, getChapters, getTopics, getPages } = require("../controllers/Admin");
 
 //controllers for all delete requests
 const {deleteSubject, deleteChapter, deleteTopic, deletePage, deleteSection} = require('../controllers/Admin')
@@ -38,12 +38,12 @@ router.get("/logout", (req, res) => {
 router.post("/addsubject",verifyToken, addSubject);
 
 //-------------add chapters-------------------//
-router.post("/addchapters",verifyToken, addChapter);
+router.post("/addchapters/:subjectId",verifyToken, addChapter);
 
 //add tpics to chapters-----------------------//
-router.post("/addtopics",verifyToken, addTopic);
+router.post("/addtopics/:chapterId",verifyToken, addTopic);
 //---------------add pages to topics----------------------//
-router.post("/addpages",verifyToken, addPage);
+router.post("/addpages/:topicId",verifyToken, addPage);
 
 //----------------add sections to pages-----------------------//
 router.post("/addsection",verifyToken, addSection);
@@ -54,11 +54,12 @@ router.post("/addsection",verifyToken, addSection);
 router.get("/subjects",verifyToken, getSubjects);
 
 //---------to get all the chapters related to a single kdsubject---------------------//
-router.get("/chapters/:subjecttitle",verifyToken, getChapters);
+router.get("/chapters/:subjectId",verifyToken, getChapters);
 
 //--------------to get all the topics realted to the single chapter------------------//
-router.get("/topics/:chaptertitle",verifyToken, getTopics);
-
+router.get("/topics/:chapterId",verifyToken, getTopics);
+//--------------------to get all the pages related toa single topic-------------------//
+router.get('/pages/:topicId',verifyToken, getPages)
 //===============update routes starts from here===========================//
 //----------------update route for kdsubject---------------------//
 router.put('/subject/:subjectid',verifyToken, editSubject)

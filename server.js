@@ -37,7 +37,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 mongoose
-  .connect( keys.mongodb.dbURI , { useUnifiedTopology: true, useNewUrlParser: true })
+  .connect( 'mongodb+srv://deepak:deepak123@cluster0-6rn6a.mongodb.net/test?retryWrites=true&w=majority' , { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => console.log( 'connected to mongodb'))
   .catch(err => {
     console.log(err);

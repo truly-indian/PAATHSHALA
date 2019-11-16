@@ -66,7 +66,7 @@ exports.loginAdmin = async (req, res, next) => {
             localStorage.setItem("loginToken", token);
             // res.header("access-token", token);
             res.status(200).json({
-              "access-token": token,
+              "accessToken": token,
               registeredEmail: adminObject.email,
               message: "Login Success",
               status: 200
@@ -96,7 +96,7 @@ exports.addSubject = (req, res) => {
       .save()
       .then(newSubject => {
         console.log(newSubject)
-        res.status(200).json(newSubject)
+        res.status(200).json({newSubject,message:'sucess!!'})
       })
       .catch(err => {
         console.log(err);
@@ -112,7 +112,7 @@ exports.addChapter = (req, res) => {
   const authData = req.authData
   if(authData) {
     console.log(authData)
-    kdSubject.findOne({ subject_title: req.body.subjectTitle }).then(subject => {
+    kdSubject.findOne({ _id: req.params.subjectId }).then(subject => {
       if (!subject) {
         res.status(404).json({ err: "No Subject found!!!" });
       }
@@ -125,10 +125,16 @@ exports.addChapter = (req, res) => {
       new kdChapter(newChapter)
         .save()
         .then(chapter => {
-          kdChapter.findOne({ subject_title: req.body.subjectTitle })
+          kdChapter.findOne({ subject_id: req.params.subjectId })
             .then(chapter => {
-              kdSubject.findOneAndUpdate({ subject_title: req.body.subjectTitle }, { $push: { Chapters: chapter._id } }, { new: true })
-                .then(data => res.json(data))
+              console.log(chapter._id)
+              kdSubject.findOneAndUpdate({ _id: req.body.subjectId })
+                .then((kdsub) => {
+                  console.log(kdsub)
+                  kdsub.chapters.unshift(chapter._id)
+                  console.log(kdsub)
+                  kdsub.save().then(() => res.json({message:'sucess!!'})).catch(err => console.log(err))
+                })
                 .catch(err => console.log(err));
             })
             .catch(err => console.log(err));
@@ -146,7 +152,7 @@ exports.addTopic = (req, res) => {
   //console.log(req.body.topicTitle);
   const authData = req.authData
   if(authData) {
-    kdChapter.findOne({ chapterTitle: req.body.chapterTitle }).then(chapter => {
+    kdChapter.findOne({ _id: req.params.chapterId }).then(chapter => {
       if (!chapter) {
         res.status(404).json({ err: "No Chapter found" });
       }
@@ -159,10 +165,14 @@ exports.addTopic = (req, res) => {
       new kdTopic(newTopic)
         .save()
         .then(topic => {
-          kdTopic.findOne({ title: req.body.chapterTitle })
+          kdTopic.findOne({ chapter_id: req.params.chapterId })
             .then(topic => {
-              kdChapter.findOneAndUpdate({ chapterTitle: req.body.chapterTitle }, { $push: { Topics: topic._id } }, { new: true })
-                .then(data => res.json(data))
+              kdChapter.findOneAndUpdate({ _id: req.params.chapterId })
+                .then((kdchap) => {
+                  kdchap.topics.unshift(topic._id)
+                //  console.log(kdsub)
+                  kdchap.save().then(() => res.json({message:'sucess!!'})).catch(err => console.log(err))
+                })
                 .catch(err => console.log(err));
             })
             .catch(err => console.log(err));
@@ -180,7 +190,7 @@ exports.addPage = (req, res) => {
   //console.log(req.body.topicTitle);
   const authData = req.authData
   if(authData) {
-    kdTopic.findOne({ topic_title: req.body.topicTitle }).then(topics => {
+    kdTopic.findOne({ _id: req.params.topicId}).then(topics => {
       if (!topics) {
         res.status(404).json({ err: "No Chapter found" });
       }
@@ -195,10 +205,14 @@ exports.addPage = (req, res) => {
       new kdPage(newPage)
         .save()
         .then(page => {
-          kdPage.findOne({ page_title: req.body.page_title })
+          kdPage.findOne({ topic_id: req.params.topicId })
             .then(page => {
-              kdTopic.findOneAndUpdate({ topic_title: req.body.topicTitle }, { $push: { Pages: page._id } }, { new: true })
-                .then(data => res.json(data))
+              kdTopic.findOneAndUpdate({ _id: req.params.topicId })
+                .then((kdtop) => {
+                  kdtop.pages.unshift(page._id)
+                  //  console.log(kdsub)
+                    kdtop.save().then(() => res.json({message:'sucess!!'})).catch(err => console.log(err))
+                })
                 .catch(err => console.log(err));
             })
             .catch(err => console.log(err));
@@ -295,7 +309,8 @@ exports.getSubjects = (req, res) => {
 exports.getChapters = (req, res) => {
   const authData = req.authData
   if(authData) {
-    kdChapter.find({ subject_title: req.params.subjecttitle })
+    console.log(req.params.subjectId)
+    kdChapter.find({subject_id: req.params.subjectId})
     .then(chapters => {
       res.status(200).json(chapters);
     })
@@ -311,7 +326,7 @@ exports.getChapters = (req, res) => {
 exports.getTopics = (req, res) => {
   const authData = req.authData
   if(authData) {
-    kdTopic.find({ title: req.params.chaptertitle })
+    kdTopic.find({ chapter_id: req.params.chapterId })
     .then(topics => {
       res.status(200).json(topics);
     })
@@ -323,6 +338,26 @@ exports.getTopics = (req, res) => {
    res.status(401).json({message: 'Unauthorized!!'})
  }
 };
+
+//---------------get all pages of a particular topics in the database------------//
+exports.getPages = (req, res) => {
+  const authData = req.authData
+  if(authData) {
+    kdPage.find({ topic_id: req.params.topicId })
+    .then(pages => {
+      res.status(200).json(pages);
+    })
+    .catch(err => {
+      res.status(400).json(err);
+    });
+  }
+ else {
+   res.status(401).json({message: 'Unauthorized!!'})
+ }
+};
+
+
+
 //-------------all the delete routes start from here---------------//
 //=---------------delete subject route-------------------------//
 exports.deleteSubject = (req, res) => {
