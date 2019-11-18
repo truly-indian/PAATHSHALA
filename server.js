@@ -18,6 +18,16 @@ const app = express();
 const SERVER_PORT = process.env.PORT || 3000;
 
 require("dotenv").config();
+//app.use(cors())
+
+app.use((req,res,next) => {
+   res.header('Access-Control-Allow-Origin', '*'      /* '*' basically gives access to any link from the server*/)
+   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+   if(req.method === 'OPTIONS') {
+     res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET, COPY, HEAD, LINK, UNLINK, PURGE, LOCK, UNLOCK, VIEW, PROPFIND')
+     return res.status(200).json({})
+   }
+})
 
 app.use(methodOverride('_method'))
 
@@ -29,7 +39,6 @@ app.engine(
 );
 
 app.set("view engine", "handlebars");
-app.use(cors());
 app.use(morgan());
 app.use(compression());
 app.use(bodyParser.urlencoded({ extended: false }));
