@@ -35,7 +35,7 @@ const sectionTypeSchema = new Schema({
         type:String
       }
     })
-  ],
+  ], 
   quiz: [
     {
       questionsimg: { light: String, dark: String },
@@ -62,6 +62,9 @@ const sectionTypeSchema = new Schema({
 const kdSectionSchema = new Schema({
   id: {
     type: Schema.Types.ObjectId
+  },
+  page_id: {
+    type: String
   },
   section_title: {
     type: String

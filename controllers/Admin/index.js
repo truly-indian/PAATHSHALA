@@ -227,54 +227,91 @@ exports.addPage = (req, res) => {
 
 //--------------------add sections function---------------//
 exports.addSection = (req, res) => {
-  
+ //console.log(req.params.pageId)
   const authData = req.authData
   if(authData) {
-    kdPage.findOne({page_title:req.body.page_title})
-    .then((section) => {
-           if(!section) {
+    kdPage.findOne({_id: req.params.pageId})
+    .then((page) => {
+           if(!page) {
              res.status(404).json({message: 'not found!!'})
            }
-        const newSection = {
-          section_title: req.body.section_title,
-          page_title: req.body.page_title,
-        }
-        if(req.body.section_type == 'videos') {
-          newSection.section_name = req.body.section_type
-          newSection.videos = req.body.videoLinks
+           const newSection = {quiz:[],assignment:[]}
+
+          console.log(page._id)
+ /*const newSection = {
+ section_title: req.body.section_title,
+ page_title: req.body.page_title,
+ page_id: page._id
+ }*/
+
+
+        if(req.body.section_type === 'videos') {
+          //console.log('in the videos if'+ page._id)
+          newSection.section_name = req.body.section_type,
+          newSection.videos = req.body.videoLinks,
+          newSection.section_title = req.body.section_title,
+          newSection.page_title = req.body.page_title,
+          newSection.page_id = page._id
         }
         if(req.body.section_type === 'theory_image') {
-           newSection.section_name = req.body.section_type
-           newSection.theory_img = req.body.img_path
+           newSection.section_name = req.body.section_type,
+           newSection.theory_img = req.body.img_path,
+           newSection.section_title = req.body.section_title,
+           newSection.page_title = req.body.page_title,
+           newSection.page_id = page._id
         }
         if(req.body.section_type === 'theoryrichtext') {
-             console.log(req.body.text_data)
-             newSection.section_name = req.body.section_type
-             newSection.theory_richtext = req.body.text_data
+             //console.log(req.body.text_data)
+             newSection.section_name = req.body.section_type,
+             newSection.theory_richtext = req.body.text_data,
+             newSection.section_title = req.body.section_title,
+             newSection.page_title = req.body.page_title,
+             newSection.page_id = page._id
         }
         if(req.body.section_type === 'quiz') {
            //needed to implemented correctly//
-               newSection.section_name = req.body.section_type
-               newSection.quiz.questionsimg =  req.body.questionsimg
-               newSection.quiz.answerimg = req.body.answerimg
-               newSection.quiz.answerkey = req.body.answerkey
-               newSection.quiz.videoSolutionURL = req.body.videoSolutionURL
+               newSection.section_name = req.body.section_type,
+               newSection.quiz.questionsimg = req.body.questionsimg,
+               newSection.quiz.answerimg = req.body.answerimg,
+               newSection.quiz.answerkey = req.body.answerkey,
+               newSection.quiz.videoSolutionURL = req.body.videoSolutionURL,
+               newSection.section_title = req.body.section_title,
+               newSection.page_title = req.body.page_title,
+               newSection.page_id = page._id
+               //console.log(newSection)
         }
         if(req.body.section_type === 'assignment') {
           //needed to be implemented correctly//
-             newSection.section_name = req.body.section_type
-             newSection.assignment.questionsimg = req.body.questionsimg
-             newSection.assignment.answerimg = req.body.answerimg
-             newSection.assignment.videoSolutionURL = req.body.videoSolutionURL
+             newSection.section_name = req.body.section_type,
+             newSection.assignment.questionsimg = req.body.questionsimg,
+             newSection.assignment.answerimg = req.body.answerimg,
+             newSection.assignment.videoSolutionURL = req.body.videoSolutionURL,
+             newSection.section_title = req.body.section_title,
+             newSection.page_title = req.body.page_title,
+             newSection.page_id = page._id
         }
-        console.log(newSection)
+        //console.log(newSection)
+         
         new kdSection(newSection).save()
         .then((section) => {
-           kdSection.findOne({section_title: req.body.section_title})
+          console.log(section)
+           kdSection.findOne({page_id: req.params.pageId})
            .then((section) => {
-              kdPage.findOneAndUpdate({page_title: req.body.page_title}, { $push: { Sections: section._id } }, { new: true })
-              .then(data => res.json(data))
-               .catch(err => console.log(err));
+              kdPage.findOne({_id: req.params.pageId})
+              .then((kdpg) => {
+                    console.log('sectionid' + section._id)
+                    kdpg.sections.unshift(section._id)
+                    kdpg.save()
+                    .then(() => {
+                       res.status(200).json({
+                         message: 'section added successfully'
+                       })
+                    })
+                    .catch((err) => {
+                        console.log('Oops error occured' + err)
+                    })
+              })
+               .catch(err => console.log( ' this error' +err));
            })
            .catch(err => console.log(err));
         })

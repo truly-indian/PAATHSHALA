@@ -46,7 +46,7 @@ router.post("/addtopics/:chapterId",verifyToken, addTopic);
 router.post("/addpages/:topicId",verifyToken, addPage);
 
 //----------------add sections to pages-----------------------//
-router.post("/addsection",verifyToken, addSection);
+router.post("/addsection/:pageId",verifyToken, addSection);
 
 //-----------starting with all the get routes from here--------------------------//
 
